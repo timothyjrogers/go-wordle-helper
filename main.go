@@ -8,6 +8,7 @@ import (
 	"os"
 	"strings"
 	"regexp"
+	"math"
 )
 
 func gen_freqs(words []string) map[string][5]int {
@@ -86,11 +87,14 @@ func check_word(word string, guess string, results string) bool {
 		if (results[i] == 'x' || results[i] == 'y') && word[i] == guess[i] {
 			return false
 		}
+		if results[i] == 'y' && !strings.Contains(word, string(guess[i])) {
+			return false
+		}
 	}
 	return true
 }
 
-func suggest_word(words []string, freqs map[string][5]int) string {
+func suggest_word(words []string, freqs map[string][5]int) []string {
 	scores := make(map[string]int)
 	for i := 0; i < len(words); i++ {
 		word := words[i]
@@ -100,15 +104,21 @@ func suggest_word(words []string, freqs map[string][5]int) string {
 		}
 	}
 
-	suggestion := ""
-	max := 0
-	for key, val := range scores {
-		if val > max {
-			suggestion = key
-			max = val
+	var suggestions []string
+	iters := int(math.Min(10.0, float64(len(scores))))
+	for i := 0; i < iters; i++ {
+		suggestion := ""
+		max := 0
+		for key, val := range scores {
+			if val > max {
+				suggestion = key
+				max = val
+			}
 		}
+		suggestions = append(suggestions, suggestion)
+		delete(scores, suggestion)
 	}
-	return suggestion
+	return suggestions
 }
 
 func main() {
@@ -137,7 +147,7 @@ func main() {
 			}
 		}
 		words = updated_words
-		suggestion := suggest_word(words, letter_freq)
-		fmt.Printf("Suggested guess: %s\n", suggestion)
+		suggestions := suggest_word(words, letter_freq)
+		fmt.Printf("Suggested guesses: %s\n", suggestions)
 	}
 }
