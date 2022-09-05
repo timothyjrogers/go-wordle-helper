@@ -84,7 +84,10 @@ func check_word(word string, guess string, results string) bool {
 		if results[i] == 'g' && word[i] != guess[i] {
 			return false
 		}
-		if (results[i] == 'x' || results[i] == 'y') && word[i] == guess[i] {
+		if results[i] == 'x' && strings.Contains(word, string(guess[i])) {
+			return false
+		}
+		if results[i] == 'y' && word[i] == guess[i] {
 			return false
 		}
 		if results[i] == 'y' && !strings.Contains(word, string(guess[i])) {
