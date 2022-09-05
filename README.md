@@ -27,3 +27,7 @@ The word-suggestion strategy used in the helper is very naive. The following rul
 * If the word does **not** have a letter marked **g** in the result in the same position, discard the word
 
 On each iteration this removes invalid words from the list, allowing a new top-10 suggestions to reach the highest scores.
+
+Scoring of potential words is done via a naive letter-frequency summation. Before asking for guesses the helper calculates the letter frequency for all 5-letter Scrabble-legal words in each position. For example, the distribution for 'a' is `[534 1607 888 736 423]` meaning that 534 words have 'a' as their first letter, 1607 their second letter, and so on.
+
+To determine the "best" word the frequency for each letter in the word for that position is summed. This is not and optimized scoring method, but it generates reasonable results.
